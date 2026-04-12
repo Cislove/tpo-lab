@@ -5,16 +5,23 @@ import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.doubles.shouldBeNaN
 import io.kotest.matchers.shouldNotBe
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.double
+import io.kotest.property.checkAll
 import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.round
 import kotlin.math.sqrt
 
 private const val EPS = 1e-8
 
 class TgCalculateTest : StringSpec({
 
+    //тестим по точкам, дабы убедиться в работоспособности тангенса как функции
     "check corner dots" {
         forAll(
-            row(0.0, 0.0,),
+            row(0.0, 0.0),
             row(0.1, 0.10033467208545055),
             row(0.3, 0.30933624960962325),
             row( 0.5, 0.5463024898437905),
@@ -26,28 +33,7 @@ class TgCalculateTest : StringSpec({
         }
     }
 
-    "check true sign for zero" {
-        (1.0 / tg(-0.0)) shouldBe Double.NEGATIVE_INFINITY
-        (1.0 / tg(0.0)) shouldBe Double.POSITIVE_INFINITY
-    }
-
-    "check symmetry of tg" {
-        val x = 1.23456789
-        tg(-x) shouldBe (-tg(x) plusOrMinus EPS)
-    }
-
-    "check periodicity of tg" {
-        val x = 1.23456789
-        tg(x + PI) shouldBe (tg(x) plusOrMinus EPS)
-    }
-
-    "check extreme cases" {
-        tg(Double.NaN).shouldBeNaN()
-        tg(Double.POSITIVE_INFINITY).shouldBeNaN()
-        tg(Double.NEGATIVE_INFINITY).shouldBeNaN()
-    }
-
-    "check assymptotes" {
+    "check asymptotes" {
         forAll(
             row(PI / 2.0 - 1e-13, Double.POSITIVE_INFINITY),
             row(-PI / 2.0 + 1e-13, Double.NEGATIVE_INFINITY),
@@ -58,21 +44,46 @@ class TgCalculateTest : StringSpec({
         }
     }
 
+    //тестим особенности работы с числами в компутере
+    "check true sign for zero" {
+        (1.0 / tg(-0.0)) shouldBe Double.NEGATIVE_INFINITY
+        (1.0 / tg(0.0)) shouldBe Double.POSITIVE_INFINITY
+    }
+
+    "check extreme cases" {
+        tg(Double.NaN).shouldBeNaN()
+        tg(Double.POSITIVE_INFINITY).shouldBeNaN()
+        tg(Double.NEGATIVE_INFINITY).shouldBeNaN()
+    }
+
     "check for large multiples" {
         val x = 1.23456789
         val k = 1_000_000.0
         tg(k) shouldNotBe (tg(k + x) plusOrMinus EPS)
     }
 
+    //тестим свойства тангенса как математической функции с помощью проперти бейзд
+    "check symmetry of tg" {
+        checkAll(iterations = 100, Arb.double(min = -1e6, max = 1e6)) { x ->
+            if(closeToAsymptote(x)) return@checkAll
+            tg(-x) shouldBe (-tg(x) plusOrMinus EPS)
+        }
+    }
+
+    "check periodicity of tg" {
+        checkAll(iterations = 100, Arb.double(min = 0.0, max = 1e6)) { x ->
+            if(closeToAsymptote(x)) return@checkAll
+            tg(x + PI) shouldBe (tg(x) plusOrMinus EPS)
+        }
+    }
+
     "check small tg(x) approx x" {
-        forAll(
-            row(1e-12),
-            row(1e-9),
-            row(1e-6),
-            row(1e-4),
-            row(1e-3)
-        ) {
-            tg(it) shouldBe (it plusOrMinus EPS)
+        checkAll(iterations = 100, Arb.double(min = 0.0, max = 1.0)) { value ->
+            val x = 10.0.pow(-12.0 + 9.0 * value)
+            tg(x) shouldBe (x plusOrMinus EPS)
         }
     }
 })
+
+fun closeToAsymptote(x: Double) =
+    abs(x - ((round(x / PI) + 0.5) * PI)) < 1e-6
