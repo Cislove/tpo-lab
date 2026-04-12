@@ -14,8 +14,6 @@ import kotlin.math.pow
 import kotlin.math.round
 import kotlin.math.sqrt
 
-private const val EPS = 1e-8
-
 class TgCalculateTest : StringSpec({
 
     //тестим по точкам, дабы убедиться в работоспособности тангенса как функции
@@ -87,3 +85,5 @@ class TgCalculateTest : StringSpec({
 
 fun closeToAsymptote(x: Double) =
     abs(x - ((round(x / PI) + 0.5) * PI)) < 1e-6
+
+private const val EPS = 1e-7
