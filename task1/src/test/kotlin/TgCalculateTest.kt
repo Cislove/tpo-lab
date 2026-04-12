@@ -6,6 +6,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.doubles.shouldBeNaN
 import io.kotest.matchers.shouldNotBe
 import kotlin.math.PI
+import kotlin.math.sqrt
 
 private const val EPS = 1e-8
 
@@ -13,12 +14,13 @@ class TgCalculateTest : StringSpec({
 
     "check corner dots" {
         forAll(
-            row(0.1, 0.10033467),
-            row(0.5, 0.54630249),
-            row(1.0, 1.55740772),
-            row(2.0, -2.18503986),
-            row(3.0, -0.14254654),
-            row(3.5, 0.37458564),
+            row(0.0, 0.0,),
+            row(0.1, 0.10033467208545055),
+            row(0.3, 0.30933624960962325),
+            row( 0.5, 0.5463024898437905),
+            row(PI / 6, 1 / sqrt(3.0)),
+            row(PI / 4, 1.0),
+            row(PI / 3, sqrt(3.0)),
         ) { x, expected ->
             tg(x) shouldBe (expected plusOrMinus EPS)
         }
@@ -26,7 +28,7 @@ class TgCalculateTest : StringSpec({
 
     "check true sign for zero" {
         (1.0 / tg(-0.0)) shouldBe Double.NEGATIVE_INFINITY
-        (1.0 / tg(0.0))  shouldBe Double.POSITIVE_INFINITY
+        (1.0 / tg(0.0)) shouldBe Double.POSITIVE_INFINITY
     }
 
     "check symmetry of tg" {
