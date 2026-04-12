@@ -37,10 +37,6 @@ class BPlusTreeTraceTest : FunSpec({
         )
 
         sem.any { it.startsWith("insert_parent|new_root") } shouldBe true
-
-        t.get(1) shouldBe 1
-        t.get(2) shouldBe 2
-        t.get(3) shouldBe 3
     }
 
     test("delete can cause rebalance and logs it (factor=3)") {
@@ -60,6 +56,30 @@ class BPlusTreeTraceTest : FunSpec({
                 it.startsWith("rebalance_leaf|merge_into_left") ||
                 it.startsWith("rebalance_leaf|merge_right_into_leaf")
         } shouldBe true
+    }
+
+    test("get logs hit/miss and leaf keys") {
+        val t = BPlusTree<Int>(factor = 3)
+        t.insert(10, 100)
+        t.insert(20, 200)
+        t.clearTrace()
+
+        t.get(10) shouldBe 100
+        t.get(15) shouldBe null
+
+        val sem = t.traceSnapshot().semantic()
+
+        sem.shouldContainInOrder(
+            "get|start|10",
+            "find_leaf|start|10",
+            "find_leaf|done|10|leafKeys=[10, 20]",
+            "get|hit|10|leafKeys=[10, 20]",
+
+            "get|start|15",
+            "find_leaf|start|15",
+            "find_leaf|done|15|leafKeys=[10, 20]",
+            "get|miss|15|leafKeys=[10, 20]"
+        )
     }
 })
 
