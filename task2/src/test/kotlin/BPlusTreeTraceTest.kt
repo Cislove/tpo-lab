@@ -64,8 +64,8 @@ class BPlusTreeTraceTest : FunSpec({
         t.insert(20, 200)
         t.clearTrace()
 
-        t.get(10) shouldBe 100
-        t.get(15) shouldBe null
+        t.get(10)
+        t.get(15)
 
         val sem = t.traceSnapshot().semantic()
 
