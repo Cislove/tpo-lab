@@ -22,6 +22,9 @@ class TgCalculateTest : StringSpec({
             row(PI / 6, 1 / sqrt(3.0)),
             row(PI / 4, 1.0),
             row(PI / 3, sqrt(3.0)),
+            row(2 * PI / 3, - sqrt(3.0)),
+            row(3 * PI / 4,  - 1.0),
+            row(5 * PI / 6, - 1 / sqrt(3.0)),
         ) { x, expected ->
             tg(x) shouldBe (expected plusOrMinus EPS)
         }
