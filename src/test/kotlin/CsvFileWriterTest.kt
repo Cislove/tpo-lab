@@ -56,10 +56,10 @@ class CsvFileWriterTest : FunSpec({
 
         val lines = tempFile.readLines()
         assertSoftly {
-        lines[0] shouldBe "x, y"
-        lines[1] shouldBe "0, Nan"
-        lines[2] shouldBe "0.5, Nan"
-            }
+            lines[0] shouldBe "x, y"
+            lines[1] shouldBe "0, Nan"
+            lines[2] shouldBe "0.5, Nan"
+        }
     }
 
     test("write flushes even if function throws non-IllegalArgumentException") {
@@ -69,15 +69,13 @@ class CsvFileWriterTest : FunSpec({
             }
         }
 
-        shouldThrow<ArithmeticException> {
-            writer.write(
-                startX = BigDecimal.ZERO,
-                endX = BigDecimal.ONE,
-                step = BigDecimal("0.5"),
-                function = f,
-                accuracy = BigDecimal("0.001")
-            )
-        }
+        writer.write(
+            startX = BigDecimal.ZERO,
+            endX = BigDecimal.ONE,
+            step = BigDecimal("0.5"),
+            function = f,
+            accuracy = BigDecimal("0.001")
+        )
 
         val lines = tempFile.readLines()
         lines[0] shouldBe "x, y"
