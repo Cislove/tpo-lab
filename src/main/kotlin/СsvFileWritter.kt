@@ -33,6 +33,9 @@ class СsvFileWriter {
                 catch (_: IllegalArgumentException) {
                     writer.write("${currentX.toPlainString()}, Nan")
                 }
+                catch (_: ArithmeticException) {
+                    writer.write("${currentX.toPlainString()}, Nan")
+                }
                 writer.newLine()
 
                 currentX += step
