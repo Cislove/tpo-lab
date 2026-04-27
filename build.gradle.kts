@@ -15,6 +15,8 @@ java {
 dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
     testImplementation("io.kotest:kotest-assertions-core:5.9.1")
+    testImplementation("io.kotest:kotest-property:5.9.1")
+    testImplementation("io.kotest:kotest-framework-datatest:5.9.1")
 
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
     testImplementation("org.mockito:mockito-junit-jupiter:5.11.0")
