@@ -34,7 +34,7 @@
 - *Параметризованные тесты:* Использовались параметризованные тесты для проверки большого количества точек
 
 ### Тестовое покрытие
-https://Cislove.github.io/tpo-lab/jacoco/
+[![Coverage](https://Cislove.github.io/tpo-lab/badges/jacoco-coverage.svg)](https://Cislove.github.io/tpo-lab/jacoco/)
 
 ### Графики результатов интеграции
 #### Секант
