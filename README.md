@@ -1,6 +1,6 @@
 # Лабораторная работа №2
 [![codecov](https://codecov.io/gh/Cislove/tpo-lab/branch/lab2/graph/badge.svg)](https://codecov.io/gh/Cislove/tpo-lab)
-**Выполнил**: Рахимов И.И. (409442)  
+
 **Группа**: P3319  
 **Преподаватель**: Тюрин И.Н.  
 **Вариант**: 3900
