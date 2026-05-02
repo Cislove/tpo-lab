@@ -1,6 +1,7 @@
 # Лабораторная работа №2
-[![codecov](https://codecov.io/gh/Cislove/tpo-lab/branch/lab2/graph/badge.svg)](https://codecov.io/gh/Cislove/tpo-lab)
+[![Coverage](https://Cislove.github.io/tpo-lab/badges/jacoco-coverage.svg)](https://Cislove.github.io/tpo-lab/jacoco/)
 
+**ФИО**: Рахимов Ильнар Ильдарович
 **Группа**: P3319  
 **Преподаватель**: Тюрин И.Н.  
 **Вариант**: 3900
