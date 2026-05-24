@@ -10,6 +10,7 @@ import java.time.Duration
 
 object WebDriverFactory {
     fun create(config: TestConfig): WebDriver {
+        println("browser=${config.browserName}, headless=${config.headless}")
         val driver = when (config.browserName) {
             "chrome" -> createChromeDriver(config)
             "firefox" -> createFirefoxDriver(config)
@@ -17,7 +18,6 @@ object WebDriverFactory {
         }
 
         driver.manage().timeouts().implicitlyWait(Duration.ZERO)
-        driver.manage().window().maximize()
 
         return driver
     }
