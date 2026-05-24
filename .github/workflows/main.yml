@@ -39,13 +39,15 @@ jobs:
         run: chmod +x gradlew
 
       - name: Test chrome + JaCoCo report
-        run: ./gradlew --no-daemon \
+        run: |
+            ./gradlew --no-daemon \
               -DbaseUrl="https://azbyka.ru/znakomstva/" \
               -DbrowserName=chrome \
               -Dheadless=true \
               clean test jacocoTestReport
       - name: Test firefox + JaCoCo report
-        run: ./gradlew --no-daemon \
+        run: |
+            ./gradlew --no-daemon \
               -DbaseUrl="https://azbyka.ru/znakomstva/" \
               -DbrowserName=firefox \
               -Dheadless=true \
