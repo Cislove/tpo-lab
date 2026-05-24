@@ -1,7 +1,7 @@
 name: jacoco-pages
 on:
   push:
-    branches: [ lab2 ]
+    branches: [ lab3 ]
   workflow_dispatch:
 
 permissions:
