@@ -1,0 +1,143 @@
+name: jacoco-pages
+on:
+  push:
+    branches: [ lab2 ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  selenium-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
+      - name: Install Firefox
+        run: sudo apt-get install -y firefox
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Test chrome + JaCoCo report
+        run: ./gradlew --no-daemon \
+              -DbaseUrl="https://azbyka.ru/znakomstva/" \
+              -DbrowserName=chrome \
+              -Dheadless=true \
+              clean test jacocoTestReport
+      - name: Test firefox + JaCoCo report
+        run: ./gradlew --no-daemon \
+              -DbaseUrl="https://azbyka.ru/znakomstva/" \
+              -DbrowserName=firefox \
+              -Dheadless=true \
+              clean test jacocoTestReport
+
+      - name: Generate coverage badge (SVG)
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          import os
+
+          xml_path = "build/reports/jacoco/test/jacocoTestReport.xml"
+          tree = ET.parse(xml_path)
+          root = tree.getroot()
+
+          # Берём общий instruction coverage (можно поменять на LINE)
+          counter = None
+          for c in root.findall("counter"):
+            if c.get("type") == "INSTRUCTION":
+              counter = c
+              break
+          if counter is None:
+            raise SystemExit("No INSTRUCTION counter found in JaCoCo XML")
+
+          missed = int(counter.get("missed"))
+          covered = int(counter.get("covered"))
+          total = missed + covered
+          pct = 100.0 * covered / total if total else 0.0
+
+          # Цвета как у shields.io
+          if pct >= 90: color = "#4c1"
+          elif pct >= 80: color = "#97CA00"
+          elif pct >= 70: color = "#a4a61d"
+          elif pct >= 60: color = "#dfb317"
+          elif pct >= 50: color = "#fe7d37"
+          else: color = "#e05d44"
+
+          label = "coverage"
+          value = f"{pct:.1f}%"
+
+          # Простой SVG (статический размер; для README достаточно)
+          # Если хочешь идеальный — можно усложнить, но этого обычно хватает.
+          svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="110" height="20" role="img" aria-label="{label}: {value}">
+          <linearGradient id="s" x2="0" y2="100%">
+            <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+            <stop offset="1" stop-opacity=".1"/>
+          </linearGradient>
+          <clipPath id="r">
+            <rect width="110" height="20" rx="3" fill="#fff"/>
+          </clipPath>
+          <g clip-path="url(#r)">
+            <rect width="60" height="20" fill="#555"/>
+            <rect x="60" width="50" height="20" fill="{color}"/>
+            <rect width="110" height="20" fill="url(#s)"/>
+          </g>
+          <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+            <text x="30" y="14">{label}</text>
+            <text x="85" y="14">{value}</text>
+          </g>
+          </svg>'''
+
+          os.makedirs("site/jacoco", exist_ok=True)
+          os.makedirs("site/badges", exist_ok=True)
+
+          with open("site/badges/jacoco-coverage.svg", "w", encoding="utf-8") as f:
+            f.write(svg)
+
+          # index.html (страница с ссылками)
+          with open("site/index.html", "w", encoding="utf-8") as f:
+            f.write("""<!doctype html>
+          <html><head><meta charset="utf-8"><title>Reports</title></head>
+          <body>
+            <h1>Reports</h1>
+            <ul>
+              <li><a href="./jacoco/">JaCoCo coverage report</a></li>
+              <li><a href="./badges/jacoco-coverage.svg">Coverage badge (SVG)</a></li>
+            </ul>
+          </body></html>
+          """)
+
+          print(f"Coverage: {pct:.1f}% (missed={missed}, covered={covered})")
+          PY
+
+      - name: Prepare JaCoCo HTML for Pages
+        run: |
+          cp -R build/reports/jacoco/test/html/* site/jacoco/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
