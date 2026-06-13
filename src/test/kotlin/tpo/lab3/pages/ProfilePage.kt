@@ -3,27 +3,26 @@ package tpo.lab3.pages
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.PageFactory
-import tpo.lab3.config.TestConfig
 
-class ProfilPage(
+class ProfilePage(
     webDriver: WebDriver,
-    val baseUrl: String = TestConfig.baseUrl.trimEnd('/') + "/profil",
-): BasePage(webDriver) {
+): UserProfilePage(webDriver) {
 
     init {
         PageFactory.initElements(webDriver, this)
+        super.id = "4834"
     }
 
-    private val logOutButton = By.xpath("//article[@id='post-579']/div/div/div/div[2]/div/a[4]")
-    private val editProfilButton = By.xpath("//*[@id='post-579']/div[1]/div[1]/div[1]/div[2]/div[1]/a[3]")
+    private val logOutButton = By.xpath("//a[contains(@href, 'action=logout')]")
+    private val editProfilButton = By.xpath("//a[contains(@class, 'profile-edit-link')]")
 
-    fun open(): ProfilPage {
+    fun open(): ProfilePage {
         webDriver.navigate().to(baseUrl)
         return this
     }
 
-    fun waitUntilOpened(): ProfilPage {
-        waitUntilUrlContains("/profil")
+    override fun waitUntilOpened(id: String): ProfilePage {
+        super.waitUntilOpened(id)
         waitUntilClickable(logOutButton)
         return this
     }
@@ -39,8 +38,8 @@ class ProfilPage(
     }
 
     inner class EditProfilPage(
-        webDriver: WebDriver = this@ProfilPage.webDriver,
-        val baseUrl: String = this@ProfilPage.baseUrl + "?edit=1",
+        webDriver: WebDriver = this@ProfilePage.webDriver,
+        val baseUrl: String = this@ProfilePage.baseUrl + "?edit=1",
     ) : BasePage(webDriver) {
 
         init {

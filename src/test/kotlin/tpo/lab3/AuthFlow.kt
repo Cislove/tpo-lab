@@ -1,12 +1,11 @@
 package tpo.lab3
 
 import org.openqa.selenium.WebDriver
-import tpo.lab3.pages.AuthPage
 import tpo.lab3.pages.HomePage
-import tpo.lab3.pages.ProfilPage
+import tpo.lab3.pages.ProfilePage
 
 object AuthFlow {
-    fun login(driver: WebDriver): ProfilPage {
+    fun login(driver: WebDriver): ProfilePage {
         HomePage(driver)
             .open()
             .waitUntilOpened()
@@ -14,6 +13,6 @@ object AuthFlow {
             .waitUntilOpened()
             .loginAs("vim1521841@yandex.ru", "C5U_DwuPP7iVpr;")
 
-        return ProfilPage(driver)
+        return ProfilePage(driver)
     }
 }

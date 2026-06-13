@@ -4,8 +4,8 @@ kotlin = "2.3.20"
 jacoco = "0.8.13"
 
 kotest = "5.9.0"
-selenium = "4.21.0"
-webdrivermanager = "6.1.0"
+selenium = "4.35.0"
+webdrivermanager = "6.3.2"
 
 [libraries]
 selenium = { module = "org.seleniumhq.selenium:selenium-java", version.ref = "selenium" }

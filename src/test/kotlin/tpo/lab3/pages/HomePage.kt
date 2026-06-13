@@ -16,8 +16,6 @@ class HomePage(
 
     private val logInInput = By.xpath("//a[contains(text(),'Вход')]")
 
-    private val profileButton = By.xpath("//li[@id='menu-item-588']/a")
-
     fun waitUntilOpened(): HomePage {
         waitUntilUrlContains("znakomstva")
         return this
@@ -32,9 +30,4 @@ class HomePage(
         clickElement(waitUntilClickable(logInInput))
         return AuthPage(webDriver)
      }
-
-    fun clickProfileButton(): ProfilPage {
-        clickElement(waitUntilClickable(profileButton))
-        return ProfilPage(webDriver)
-    }
 }

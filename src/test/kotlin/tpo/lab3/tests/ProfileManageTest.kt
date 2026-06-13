@@ -2,25 +2,23 @@ package tpo.lab3.tests
 
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
-import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import tpo.lab3.AuthFlow
 import tpo.lab3.pages.HomePage
-import tpo.lab3.pages.ProfilPage
+import tpo.lab3.pages.ProfilePage
 
 class ProfileManageTest: BehaviorSpec(), BaseTest {
     override lateinit var driver: WebDriver
     lateinit var homePage: HomePage
-    lateinit var profilPage: ProfilPage
-    lateinit var editProfilPage: ProfilPage.EditProfilPage
+    lateinit var profilePage: ProfilePage
+    lateinit var editProfilePage: ProfilePage.EditProfilPage
 
     init {
         beforeSpec {
             createDriver()
             homePage = HomePage(driver)
-            profilPage = ProfilPage(driver)
+            profilePage = ProfilePage(driver)
         }
 
         afterSpec {
@@ -34,7 +32,7 @@ class ProfileManageTest: BehaviorSpec(), BaseTest {
             }
             When("пользователь открывает страницу профиля") {
                 beforeContainer {
-                    profilPage.waitUntilOpened()
+                    profilePage.waitUntilOpened()
                 }
 
                 Then("PROF-001: открывается страница профиля") {
@@ -43,7 +41,7 @@ class ProfileManageTest: BehaviorSpec(), BaseTest {
 
                 When("нажимает кнопку редактирования профиля") {
                     beforeContainer {
-                        editProfilPage = profilPage.clickEditProfilButton()
+                        editProfilePage = profilePage.clickEditProfilButton()
                             .open()
                             .waitUntilOpened()
                     }
@@ -53,14 +51,18 @@ class ProfileManageTest: BehaviorSpec(), BaseTest {
                     }
 
                     When("пользователь редактирует имя в крещении") {
-                        afterContainer {
-                            editProfilPage.setBaptismName("NeIvan")
+                        beforeContainer {
+                            editProfilePage.setBaptismName("NeIvan")
+                                .waitUpdatedVisible()
+
+                            driver.navigate().refresh()
                         }
                         Then("PROF-003: имя в крещении меняется") {
-                            editProfilPage.setBaptismName("Ivan")
-                            editProfilPage.waitUpdatedVisible()
+                            editProfilePage.setBaptismName("Ivan")
+                                .waitUpdatedVisible()
+
                             driver.navigate().refresh()
-                            editProfilPage.readBaptismName() shouldBe "Ivan"
+                            editProfilePage.readBaptismName() shouldBe "Ivan"
                         }
                     }
                 }

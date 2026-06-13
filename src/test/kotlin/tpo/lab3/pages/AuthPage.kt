@@ -28,7 +28,6 @@ class AuthPage(
 
     fun waitUntilOpened(): AuthPage {
         waitUntilUrlContains("/auth")
-        // Гарантируем, что форма реально готова к взаимодействию
         waitUntilVisible(usernameInput)
         waitUntilVisible(passwordInput)
         waitUntilClickable(submitButton)

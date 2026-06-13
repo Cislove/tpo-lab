@@ -29,6 +29,9 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 
+    systemProperty("browserName", System.getProperty("browserName", "chrome"))
+    systemProperty("headless", System.getProperty("headless", "true"))
+
     finalizedBy(tasks.jacocoTestReport)
 }
 

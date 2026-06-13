@@ -46,5 +46,5 @@ open class BasePage(
         } ?: emptyList()
     }
 
-    protected fun currentUrl(): String = webDriver.currentUrl ?: ""
+    fun currentUrl(): String = webDriver.currentUrl ?: ""
 }
